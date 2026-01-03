@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>03 – Screens (Executive)</title><link rel="stylesheet" href="assets/styles.css"/></head>
+<body>
+  <div class="app">
+    <aside class="app-nav">
+      <h3>BoSS Prototype — Pages</h3>
+      <div class="pages">
+        <div class="page-link" data-href="00-login.html">00 – Login</div>
+        <div class="page-link" data-href="01-design-system.html">01 – Design System</div>
+        <div class="page-link" data-href="02-global-components.html">02 – Global Components</div>
+        <div class="page-link active" data-href="03-screens-executive.html">03 – Screens (Executive)</div>
+        <div class="page-link" data-href="04-screens-hr.html">04 – Screens (HR)</div>
+        <div class="page-link" data-href="05-screens-committee.html">05 – Screens (Committee)</div>
+        <div class="page-link" data-href="06-screens-finance.html">06 – Screens (Finance)</div>
+        <div class="page-link" data-href="07-screens-audit.html">07 – Screens (Audit)</div>
+        <div class="page-link" data-href="08-screens-payroll.html">08 – Screens (Payroll)</div>
+        <div class="page-link" data-href="09-reports-exports.html">09 – Reports & Exports</div>
+        <div class="page-link" data-href="10-admin-settings.html">10 – Admin / Settings</div>
+        <div class="page-link" data-href="11-prototype-flow.html">11 – Prototype Flow (Wiring)</div>
+      </div>
+    </aside>
+    <div class="device-wrap"><div class="device"><div class="viewport">
+      <nav class="rail"><div class="btn" data-href="03-screens-executive.html" data-key="dashboard">D</div><div class="btn" data-href="04-screens-hr.html" data-key="recruitment">R</div><div class="btn" data-href="04-screens-hr.html" data-key="employees">E</div><div class="btn" data-href="06-screens-finance.html" data-key="establishment">S</div><div class="btn active" data-href="08-screens-payroll.html" data-key="payroll">P</div><div class="btn" data-href="06-screens-finance.html" data-key="finance">F</div><div class="btn" data-href="07-screens-audit.html" data-key="audit">A</div><div class="btn" data-href="09-reports-exports.html" data-key="reports">R</div><div class="spacer"></div></nav>
+      <main class="screen">
+        <div class="topbar"><div class="title">03 – Screens (Executive)</div><div class="system"><img src="assets/boss-logo.svg" alt="logo" style="height:34px;vertical-align:middle"/> BoSS HR & Payroll System</div><div class="actions"><div class="role role-label">Executive</div><div class="logout">⎋</div></div></div>
+        <div class="content">
+          <section class="section"><h4>Executive Dashboard</h4><p class="small">At-a-glance KPIs and pending approvals.</p>
+            <div style="display:flex;gap:12px;flex-wrap:wrap">
+              <div style="flex:1;min-width:220px;background:#fff;padding:12px;border-radius:8px;border:1px solid #eef2f7"><strong>Pending Approvals</strong><div style="font-size:28px;margin-top:8px">12</div><div class="small">Recommendations awaiting executive action</div></div>
+              <div style="flex:1;min-width:220px;background:#fff;padding:12px;border-radius:8px;border:1px solid #eef2f7"><strong>Payroll this period</strong><div style="font-size:20px;margin-top:8px">USD 1,256,430.00</div><div class="small">Total payroll amount</div></div>
+              <div style="flex:1;min-width:220px;background:#fff;padding:12px;border-radius:8px;border:1px solid #eef2f7"><strong>New Hires</strong><div style="font-size:28px;margin-top:8px">5</div><div class="small">Hires since last pay period</div></div>
+            </div>
+          </section>
+
+          <section class="section"><h4>Quick Actions</h4>
+            <div style="display:flex;gap:8px"><button class="btn-primary" onclick="window.location.href='05-screens-committee.html'">Review Committee Recommendations</button><button class="btn-primary" style="background:#065f46" onclick="window.location.href='08-screens-payroll.html'">Open Payroll</button></div>
+          </section>
+
+          <section class="section"><h4>Pending Items</h4>
+            <table class="table"><thead><tr><th>Candidate</th><th>Position</th><th>Status</th><th>Submitted</th><th>Action</th></tr></thead>
+            <tbody>
+              <tr><td>Mary John</td><td>Senior Accountant</td><td><span class="badge recommended">Recommended by Committee</span></td><td>12/12/2025</td><td><button class="btn-primary" onclick="alert('Open detail (prototype)')">Open</button></td></tr>
+              <tr><td>Samuel Deng</td><td>Payroll Officer</td><td><span class="badge validated">Validated by HR</span></td><td>08/12/2025</td><td><button class="btn-primary" onclick="alert('Open detail (prototype)')">Open</button></td></tr>
+            </tbody></table>
+          </section>
+
+        </div>
+      </main>
+    </div></div></div>
+  </div>
+  <script src="assets/app.js"></script>
+</body>
+</html>

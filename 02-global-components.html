@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>02 – Global Components</title><link rel="stylesheet" href="assets/styles.css"/></head>
+<body>
+  <div class="app">
+    <aside class="app-nav">
+      <h3>BoSS Prototype — Pages</h3>
+      <div class="pages">
+        <!-- same nav links -->
+        <div class="page-link" data-href="00-login.html">00 – Login</div>
+        <div class="page-link" data-href="01-design-system.html">01 – Design System</div>
+        <div class="page-link active" data-href="02-global-components.html">02 – Global Components</div>
+        <div class="page-link" data-href="03-screens-executive.html">03 – Screens (Executive)</div>
+        <div class="page-link" data-href="04-screens-hr.html">04 – Screens (HR)</div>
+        <div class="page-link" data-href="05-screens-committee.html">05 – Screens (Committee)</div>
+        <div class="page-link" data-href="06-screens-finance.html">06 – Screens (Finance)</div>
+        <div class="page-link" data-href="07-screens-audit.html">07 – Screens (Audit)</div>
+        <div class="page-link" data-href="08-screens-payroll.html">08 – Screens (Payroll)</div>
+        <div class="page-link" data-href="09-reports-exports.html">09 – Reports & Exports</div>
+        <div class="page-link" data-href="10-admin-settings.html">10 – Admin / Settings</div>
+        <div class="page-link" data-href="11-prototype-flow.html">11 – Prototype Flow (Wiring)</div>
+      </div>
+    </aside>
+    <div class="device-wrap"><div class="device"><div class="viewport">
+      <nav class="rail"><div class="btn">D</div><div class="btn">R</div><div class="btn">E</div><div class="btn">S</div><div class="btn active">P</div><div class="spacer"></div></nav>
+      <main class="screen"><div class="topbar"><div class="title">02 – Global Components</div><div class="system">BoSS HR & Payroll System</div><div class="actions"><div class="role role-label">Executive</div></div></div>
+      <div class="content">
+        <section class="section"><h4>Left Navigation Rail (72px — collapsed)</h4><p class="small">Icons only — variants: Executive, HR, Audit. Structure kept consistent for all roles.</p></section>
+        <section class="section"><h4>Top Bar Component</h4><p class="small">Screen title (left), System name (center), Role label + logout (right).</p></section>
+        <section class="section"><h4>Status Badges</h4><div class="badges"><div class="badge submitted">Submitted</div><div class="badge validated">Validated by HR</div><div class="badge recommended">Recommended by Committee</div><div class="badge approved">Approved for Appointment</div><div class="badge provisional">Provisional Employee</div><div class="badge confirmed">Confirmed Employee</div><div class="badge paydraft">Payroll Draft</div><div class="badge paylocked">Payroll Locked</div><div class="badge sentfinance">Sent to Finance</div></div></section>
+      </div></main>
+    </div></div></div>
+  </div>
+  <script src="assets/app.js"></script>
+</body>
+</html>

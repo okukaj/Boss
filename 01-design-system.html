@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>01 – Design System — BoSS</title>
+  <link rel="stylesheet" href="assets/styles.css" />
+</head>
+<body>
+  <div class="app">
+    <aside class="app-nav">
+      <h3>BoSS Prototype — Pages</h3>
+      <div class="pages">
+        <div class="page-link" data-href="00-login.html">00 – Login</div>
+        <div class="page-link active" data-href="01-design-system.html">01 – Design System</div>
+        <div class="page-link" data-href="02-global-components.html">02 – Global Components</div>
+        <div class="page-link" data-href="03-screens-executive.html">03 – Screens (Executive)</div>
+        <div class="page-link" data-href="04-screens-hr.html">04 – Screens (HR)</div>
+        <div class="page-link" data-href="05-screens-committee.html">05 – Screens (Committee)</div>
+        <div class="page-link" data-href="06-screens-finance.html">06 – Screens (Finance)</div>
+        <div class="page-link" data-href="07-screens-audit.html">07 – Screens (Audit)</div>
+        <div class="page-link" data-href="08-screens-payroll.html">08 – Screens (Payroll)</div>
+        <div class="page-link" data-href="09-reports-exports.html">09 – Reports & Exports</div>
+        <div class="page-link" data-href="10-admin-settings.html">10 – Admin / Settings</div>
+        <div class="page-link" data-href="11-prototype-flow.html">11 – Prototype Flow (Wiring)</div>
+      </div>
+      <p class="note">Device frame: iPad Pro 12.9” — 1366 × 1024 — Landscape (locked)</p>
+    </aside>
+
+    <div class="device-wrap">
+      <div class="device">
+        <div class="viewport">
+          <nav class="rail" aria-label="Left Navigation Rail">
+            <div class="btn" data-href="03-screens-executive.html" data-key="dashboard">D</div>
+            <div class="btn" data-href="04-screens-hr.html" data-key="recruitment">R</div>
+            <div class="btn" data-href="04-screens-hr.html" data-key="employees">E</div>
+            <div class="btn" data-href="06-screens-finance.html" data-key="establishment">S</div>
+            <div class="btn active" data-href="08-screens-payroll.html" data-key="payroll">P</div>
+            <div class="btn" data-href="06-screens-finance.html" data-key="finance">F</div>
+            <div class="btn" data-href="07-screens-audit.html" data-key="audit">A</div>
+            <div class="btn" data-href="09-reports-exports.html" data-key="reports">R</div>
+            <div class="spacer"></div>
+          </nav>
+
+          <main class="screen">
+            <div class="topbar">
+              <div class="title">01 – Design System</div>
+              <div class="system"><img src="assets/boss-logo.svg" alt="logo" style="height:36px;vertical-align:middle" /> BoSS HR & Payroll System</div>
+              <div class="actions"><div class="role role-label">Executive</div><div class="logout">⎋</div></div>
+            </div>
+
+            <div class="content">
+              <section class="section">
+                <h4>Colors & Tokens</h4>
+                <div style="display:flex;gap:12px;align-items:flex-end">
+                  <div style="width:160px;padding:12px;background:var(--card);border-radius:8px;border:1px solid #eef2f7"><div style="height:44px;background:var(--accent);border-radius:6px"></div><div class="small">Primary — #0b5cff</div></div>
+                  <div style="width:160px;padding:12px;background:var(--card);border-radius:8px;border:1px solid #eef2f7"><div style="height:44px;background:#c59a2f;border-radius:6px"></div><div class="small">Gold — #c59a2f</div></div>
+                </div>
+              </section>
+
+              <section class="section">
+                <h4>Typography</h4>
+                <div style="font-size:22px;font-weight:800">Heading 1 — 22pt</div>
+                <div style="font-size:16px">Body / UI — 16pt</div>
+              </section>
+
+              <section class="section">
+                <h4>Spacing & Layout</h4>
+                <p class="small">Device locked to iPad Pro 12.9" (1366×1024). Use the rail width 72px for icons-only navigation.</p>
+              </section>
+            </div>
+          </main>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="assets/app.js"></script>
+</body>
+</html>

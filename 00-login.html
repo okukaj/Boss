@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>00 – Login — BoSS HR & Payroll System</title>
+  <link rel="stylesheet" href="assets/styles.css" />
+</head>
+<body>
+  <div class="device-wrap">
+    <div class="device">
+      <div class="viewport">
+        <!-- center login panel inside device -->
+        <main style="flex:1;display:flex;align-items:center;justify-content:center">
+          <div class="login-panel">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+              <img src="assets/boss-logo.svg" class="logo" alt="BoSS logo" />
+              <div>
+                <div style="font-weight:800">BoSS HR & Payroll System</div>
+                <div class="small">Executive Demo — simulated login</div>
+              </div>
+            </div>
+            <form id="login-form">
+              <div class="form-row"><input class="input" name="username" placeholder="Username" required /></div>
+              <div class="form-row"><input type="password" class="input" name="password" placeholder="Password" required /></div>
+              <div class="form-row"><button class="btn-primary" type="submit">Sign in (demo)</button></div>
+              <div id="login-error" class="small" style="color:#9f1239"></div>
+            </form>
+            <div class="footer">Use <strong>demo</strong> / <strong>demo</strong> for the Executive demo account</div>
+          </div>
+        </main>
+      </div>
+    </div>
+  </div>
+  <script src="assets/app.js"></script>
+</body>
+</html>
