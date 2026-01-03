@@ -1,30 +1,293 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>BoSS HR & Payroll System – Executive Demo</title>
-  <link rel="stylesheet" href="styles.css">
+  <style>
+    :root{
+      --bg:#f4f6f8;
+      --accent:#0b5cff;
+      --muted:#6b7280;
+      --rail-width:72px;
+      --device-w:1366px;
+      --device-h:1024px;
+      font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    body{margin:0;background:var(--bg);color:#0f172a}
+    .app{display:flex;gap:24px;padding:24px}
+
+    /* Left app nav (outside device) */
+    .app-nav{width:240px;background:#fff;border-radius:12px;padding:16px;height:fit-content;box-shadow:0 6px 18px rgba(15,23,42,0.06)}
+    .app-nav h3{margin:0 0 8px 0;font-size:13px;color:var(--muted)}
+    .pages{display:flex;flex-direction:column;gap:6px}
+    .page-link{padding:10px 12px;border-radius:8px;font-weight:600;color:#0f172a;cursor:pointer}
+    .page-link.active{background:linear-gradient(90deg,#eef2ff,#fff);box-shadow:inset 0 -1px 0 rgba(0,0,0,0.03)}
+
+    /* Device frame */
+    .device-wrap{background:transparent;display:flex;flex-direction:column;align-items:center}
+    .device{
+      width:var(--device-w);
+      height:var(--device-h);
+      background:#fff;
+      border-radius:28px;
+      box-shadow:0 20px 50px rgba(2,6,23,0.15);
+      overflow:hidden;
+      position:relative;
+      border:6px solid #0b1220;
+    }
+    .device .viewport{width:100%;height:100%;display:flex;}
+
+    /* Left collapsed rail inside device (72px) */
+    .rail{width:var(--rail-width);background:#0b1220;color:#fff;display:flex;flex-direction:column;align-items:center;padding-top:16px;gap:8px}
+    .rail .btn{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+    .rail .btn svg{width:24px;height:24px;fill:currentColor}
+    .rail .btn.active{background:rgba(255,255,255,0.06)}
+    .rail .spacer{flex:1}
+
+    /* Main content area */
+    .screen{flex:1;padding:18px;display:flex;flex-direction:column}
+
+    /* Top bar component */
+    .topbar{height:56px;display:flex;align-items:center;gap:12px;padding:0 12px;border-bottom:1px solid #eef2f7}
+    .topbar .title{font-weight:700;font-size:16px}
+    .topbar .system{flex:1;text-align:center;font-weight:700;color:var(--muted)}
+    .topbar .actions{display:flex;align-items:center;gap:8px}
+    .role{background:#eef2ff;color:var(--accent);padding:6px 10px;border-radius:999px;font-weight:600}
+    .logout{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+
+    /* Content area */
+    .content{padding:18px;overflow:auto}
+    .section{background:#fff;border-radius:12px;padding:12px;margin-bottom:12px;border:1px solid #eef2f7}
+    .section h4{margin:0 0 8px 0}
+
+    /* Status badges */
+    .badges{display:flex;flex-wrap:wrap;gap:8px}
+    .badge{padding:6px 10px;border-radius:999px;font-weight:700;font-size:13px}
+    .submitted{background:#fff7ed;color:#b45309;border:1px solid #fef3c7}
+    .validated{background:#ecfeff;color:#065f46;border:1px solid #cffafe}
+    .recommended{background:#eef2ff;color:#1e3a8a;border:1px solid #dbeafe}
+    .approved{background:#ecfdf5;color:#065f46;border:1px solid #bbf7d0}
+    .provisional{background:#f3f4f6;color:#374151;border:1px solid #e5e7eb}
+    .confirmed{background:#eef2ff;color:#0b5cff;border:1px solid #dbeafe}
+    .paydraft{background:#fff7f8;color:#9f1239;border:1px solid #ffe4e6}
+    .paylocked{background:#111827;color:#fff}
+    .sentfinance{background:#f0fdf4;color:#065f46;border:1px solid #bbf7d0}
+
+    /* Global components preview area */
+    .variant-tabs{display:flex;gap:8px;margin-bottom:12px}
+    .variant-tabs button{padding:8px 12px;border-radius:8px;border:1px solid #e6edf6;background:#fff;cursor:pointer}
+    .variant-tabs button.active{background:linear-gradient(90deg,#eef2ff,#fff);border-color:#c7ddff}
+
+    /* Responsive note - locked frame so we don't change */
+    .note{font-size:12px;color:var(--muted)}
+
+    /* small helpers */
+    .row{display:flex;gap:12px;align-items:center}
+    code.k{background:#0b1220;color:#fff;padding:2px 6px;border-radius:6px;font-weight:700}
+  </style>
 </head>
 <body>
-  <div id="frame">
-    <aside id="rail"></aside>
-    <header id="topbar">
-      <div id="topTitle">Login</div>
-      <div>BoSS HR & Payroll System</div>
-      <div>Role: <span id="roleLabel">Executive</span></div>
-    </header>
-    <main id="content">
-      <section class="screen active" id="screen-login">
-        <img src="boss-logo.jpeg" class="logo"/>
-        <button id="btnLogin">Login</button>
-        <a href="#" id="demoRoleSwitch">Demo role switch</a>
-      </section>
-      <section class="screen" id="screen-executive-dashboard">
-        <h2>Executive Dashboard</h2>
-      </section>
-    </main>
+  <div class="app">
+    <aside class="app-nav">
+      <h3>BoSS Prototype — Pages</h3>
+      <div class="pages" role="navigation" aria-label="Pages">
+        <div class="page-link active" data-page="page-00">00 – Design System</div>
+        <div class="page-link" data-page="page-01">01 – Global Components</div>
+        <div class="page-link" data-page="page-02">02 – Screens (Executive)</div>
+        <div class="page-link" data-page="page-03">03 – Screens (HR)</div>
+        <div class="page-link" data-page="page-04">04 – Screens (Committee)</div>
+        <div class="page-link" data-page="page-05">05 – Screens (Finance)</div>
+        <div class="page-link" data-page="page-06">06 – Screens (Audit)</div>
+        <div class="page-link" data-page="page-07">07 – Prototype Flow (Wiring)</div>
+      </div>
+      <p class="note" style="margin-top:12px">Device frame: iPad Pro 12.9” — 1366 × 1024 — Landscape (locked)</p>
+    </aside>
+
+    <div class="device-wrap">
+      <div class="device" role="region" aria-label="iPad Pro 12.9 inch landscape frame">
+        <div class="viewport">
+          <!-- Left navigation rail (collapsed) -->
+          <nav class="rail" aria-label="Left Navigation Rail">
+            <div class="btn" title="Dashboard" data-key="dashboard"> 
+              <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zM13 21h8V11h-8v10zM13 3v6h8V3h-8z"/></svg>
+            </div>
+            <div class="btn" title="Recruitment" data-key="recruitment">
+              <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-6 8v-1c0-2.76 5.24-4 6-4s6 1.24 6 4v1H6z"/></svg>
+            </div>
+            <div class="btn" title="Employees" data-key="employees">
+              <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zM8 11c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.67 0-8 1.34-8 4v3h6v-3c0-.9.36-1.73.94-2.35C6.63 13.6 7.29 13 8 13zm8 0c-.29 0-.62.02-.97.05C14.97 13.44 14 14.7 14 16v3h6v-3c0-2.66-5.33-4-8-4z"/></svg>
+            </div>
+            <div class="btn" title="Establishment" data-key="establishment">
+              <svg viewBox="0 0 24 24"><path d="M12 2L1 7l11 5 9-4.09V17h2V7L12 2z"/></svg>
+            </div>
+            <div class="btn active" title="Payroll" data-key="payroll">
+              <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zM11 14.5v-7l6 3.5-6 3.5z"/></svg>
+            </div>
+            <div class="btn" title="Finance Handoff" data-key="finance">
+              <svg viewBox="0 0 24 24"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/></svg>
+            </div>
+            <div class="btn" title="Audit" data-key="audit">
+              <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l4.99 5 1.49-1.49-5-4.99z"/></svg>
+            </div>
+            <div class="btn" title="Reports" data-key="reports">
+              <svg viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zm0-10v2h14V7H7z"/></svg>
+            </div>
+            <div class="spacer"></div>
+          </nav>
+
+          <main class="screen">
+            <div class="topbar">
+              <div class="title" id="screen-title">00 – Design System</div>
+              <div class="system">BoSS HR & Payroll System</div>
+              <div class="actions">
+                <div class="role" id="role-label">Executive</div>
+                <div class="logout" title="Logout">
+                  <svg viewBox="0 0 24 24" width="18" height="18"><path d="M16 13v-2H7V8l-5 4 5 4v-3zM20 3h-8v2h8v14h-8v2h8c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg>
+                </div>
+              </div>
+            </div>
+
+            <div class="content">
+              <!-- Pages (sections) -->
+
+              <section class="section" id="page-00">
+                <h4>00 – Design System</h4>
+                <p>Color tokens, typography, spacing scale and device frame locked to iPad Pro 12.9” (1366×1024). Use this area to show the design tokens and usage guidance.</p>
+                <div style="display:flex;gap:12px;margin-top:12px;flex-wrap:wrap">
+                  <div style="width:120px;background:#fff;padding:12px;border-radius:8px;border:1px solid #eef2f7">
+                    <strong>Primary</strong>
+                    <div style="height:40px;background:var(--accent);border-radius:6px;margin-top:8px"></div>
+                    <small class="note">#0b5cff</small>
+                  </div>
+                  <div style="width:160px;background:#fff;padding:12px;border-radius:8px;border:1px solid #eef2f7">
+                    <strong>Typography</strong>
+                    <div style="margin-top:8px"><div style="font-size:20px;font-weight:700">Heading 1</div><div style="font-size:16px">Body / UI text</div></div>
+                  </div>
+                </div>
+              </section>
+
+              <section class="section" id="page-01" style="display:none">
+                <h4>01 – Global Components</h4>
+                <p>All global components are defined here once and reused across screens: Left Navigation Rail (72px collapsed, icons only), Top Bar, and Status Badges (variants).</p>
+
+                <div class="section">
+                  <h4>Left Navigation Rail (collapsed — 72px)</h4>
+                  <p class="note">Icons only, width: <code class="k">72px</code>. Below we show three variants (Executive / HR / Audit). The in-device rail is already 72px and collapsed.</p>
+                  <div class="variant-tabs" role="tablist">
+                    <button class="active" data-variant="exec">Executive</button>
+                    <button data-variant="hr">HR</button>
+                    <button data-variant="audit">Audit</button>
+                  </div>
+                  <div id="rail-preview" style="border-radius:8px;overflow:hidden;border:1px solid #eef2f7;display:inline-block">
+                    <!-- a live small preview replicating the rail -->
+                    <div style="width:72px;background:#0b1220;color:#fff;padding-top:12px;display:flex;flex-direction:column;gap:8px;align-items:center">
+                      <div style="width:48px;height:48px;border-radius:12px;background:rgba(255,255,255,0.03);display:flex;align-items:center;justify-content:center">D</div>
+                      <div style="width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center">R</div>
+                      <div style="width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center">E</div>
+                      <div style="height:12px"></div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="section">
+                  <h4>Top Bar Component</h4>
+                  <p class="note">Structure — screen title (left), System name: <strong>BoSS HR & Payroll System</strong> (center), Role label (right) and Logout icon.</p>
+                  <div style="border:1px solid #eef2f7;border-radius:8px;padding:12px;background:#fff;max-width:800px">
+                    <div style="display:flex;align-items:center;gap:8px">
+                      <div style="font-weight:700">Screen title</div>
+                      <div style="flex:1;text-align:center;color:var(--muted);font-weight:700">BoSS HR & Payroll System</div>
+                      <div style="display:flex;align-items:center;gap:8px"><div style="background:#eef2ff;color:var(--accent);padding:6px 10px;border-radius:999px">Executive</div><div style="width:36px;height:36px;border-radius:8px;background:#f8fafc;display:flex;align-items:center;justify-content:center">⎋</div></div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="section">
+                  <h4>Status Badge Component</h4>
+                  <p class="note">Variants used on lists, rows and payroll status indicators.</p>
+                  <div class="badges" style="margin-top:8px">
+                    <div class="badge submitted">Submitted</div>
+                    <div class="badge validated">Validated by HR</div>
+                    <div class="badge recommended">Recommended by Committee</div>
+                    <div class="badge approved">Approved for Appointment</div>
+                    <div class="badge provisional">Provisional Employee</div>
+                    <div class="badge confirmed">Confirmed Employee</div>
+                    <div class="badge paydraft">Payroll Draft</div>
+                    <div class="badge paylocked">Payroll Locked</div>
+                    <div class="badge sentfinance">Sent to Finance</div>
+                  </div>
+                </div>
+              </section>
+
+              <section class="section" id="page-02" style="display:none">
+                <h4>02 – Screens (Executive)</h4>
+                <p>Executive-specific screens go here — dashboard summaries, approval workflows, committee recommendations and quick actions.</p>
+              </section>
+
+              <section class="section" id="page-03" style="display:none">
+                <h4>03 – Screens (HR)</h4>
+                <p>HR screens: candidate tracking, validation controls, personnel records and appointments.</p>
+              </section>
+
+              <section class="section" id="page-04" style="display:none">
+                <h4>04 – Screens (Committee)</h4>
+                <p>Committee review pages: recommendations, notes, voting and scheduling.</p>
+              </section>
+
+              <section class="section" id="page-05" style="display:none">
+                <h4>05 – Screens (Finance)</h4>
+                <p>Finance handoff, payroll exports, reconciliation and payment status.</p>
+              </section>
+
+              <section class="section" id="page-06" style="display:none">
+                <h4>06 – Screens (Audit)</h4>
+                <p>Audit trails, activity logs, tamper evidence and approvals history.</p>
+              </section>
+
+              <section class="section" id="page-07" style="display:none">
+                <h4>07 – Prototype Flow (Wiring)</h4>
+                <p>Flow wiring for the prototype: which screen triggers what action. Use this page to wire interactive hotspots for demos.</p>
+              </section>
+
+            </div>
+
+          </main>
+        </div>
+      </div>
+      <p style="margin-top:12px;color:var(--muted);font-size:13px">Prototype: <strong>BoSS HR & Payroll System – Executive Demo</strong> — Device frame locked to iPad Pro 12.9” (1366×1024) — Landscape only.</p>
+    </div>
+
   </div>
-  <script src="script.js"></script>
+
+  <script>
+    // Page switching
+    document.querySelectorAll('.page-link').forEach(el=>el.addEventListener('click',ev=>{
+      document.querySelectorAll('.page-link').forEach(x=>x.classList.remove('active'));
+      ev.currentTarget.classList.add('active');
+      const page = ev.currentTarget.dataset.page;
+      document.querySelectorAll('.section[id^="page-"]').forEach(s=>s.style.display = s.id === page ? 'block' : 'none');
+      document.getElementById('screen-title').textContent = ev.currentTarget.textContent;
+    }));
+
+    // Variant tabs for rail
+    document.querySelectorAll('.variant-tabs button').forEach(btn=>btn.addEventListener('click',ev=>{
+      document.querySelectorAll('.variant-tabs button').forEach(b=>b.classList.remove('active'));
+      ev.currentTarget.classList.add('active');
+      const v = ev.currentTarget.dataset.variant;
+      const preview = document.getElementById('rail-preview');
+      // swap simple content to show label differences (icons-only rail stays same width)
+      if(v==='exec') preview.innerHTML = '<div style="width:72px;background:#0b1220;color:#fff;padding-top:12px;display:flex;flex-direction:column;gap:8px;align-items:center'>\n  <div style="width:48px;height:48px;border-radius:12px;background:rgba(255,255,255,0.03);display:flex;align-items:center;justify-content:center">D</div>\n  <div style="width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center">R</div>\n  <div style="width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center">E</div>\n</div>';
+      if(v==='hr') preview.innerHTML = '<div style="width:72px;background:#04263a;color:#fff;padding-top:12px;display:flex;flex-direction:column;gap:8px;align-items:center'>\n  <div style="width:48px;height:48px;border-radius:12px;background:rgba(255,255,255,0.03);display:flex;align-items:center;justify-content:center">C</div>\n  <div style="width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center">E</div>\n  <div style="width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center">P</div>\n</div>';
+      if(v==='audit') preview.innerHTML = '<div style="width:72px;background:#2a0b12;color:#fff;padding-top:12px;display:flex;flex-direction:column;gap:8px;align-items:center'>\n  <div style="width:48px;height:48px;border-radius:12px;background:rgba(255,255,255,0.03);display:flex;align-items:center;justify-content:center">A</div>\n  <div style="width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center">S</div>\n  <div style="width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center">R</div>\n</div>';
+    }));
+
+    // Simple rail button click to simulate navigation
+    document.querySelectorAll('.rail .btn').forEach(b=>b.addEventListener('click',ev=>{
+      const key = ev.currentTarget.dataset.key;
+      alert('Rail item clicked: '+key+' (prototype)')
+    }));
+
+    // Keep frame locked: disable resizing behavior (note for demo)
+  </script>
 </body>
 </html>
