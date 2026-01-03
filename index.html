@@ -3,291 +3,734 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>BoSS HR & Payroll System – Executive Demo</title>
+  <title>BoSS Prototype — Single-file</title>
   <style>
     :root{
-      --bg:#f4f6f8;
-      --accent:#0b5cff;
+      --sidebar-width:260px;
+      --topbar-height:64px;
+      --device-w:1366px; /* iPad Pro 12.9 width (landscape) */
+      --device-h:1024px; /* height */
+      --accent:#0b63ff;
       --muted:#6b7280;
-      --rail-width:72px;
-      --device-w:1366px;
-      --device-h:1024px;
+      --bg:#f4f6fb;
+      --card:#ffffff;
+      --success:#16a34a;
+      --warning:#f59e0b;
+      --danger:#ef4444;
+      --info:#0ea5e9;
       font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      color:#0f172a;
     }
-    body{margin:0;background:var(--bg);color:#0f172a}
-    .app{display:flex;gap:24px;padding:24px}
-
-    /* Left app nav (outside device) */
-    .app-nav{width:240px;background:#fff;border-radius:12px;padding:16px;height:fit-content;box-shadow:0 6px 18px rgba(15,23,42,0.06)}
-    .app-nav h3{margin:0 0 8px 0;font-size:13px;color:var(--muted)}
-    .pages{display:flex;flex-direction:column;gap:6px}
-    .page-link{padding:10px 12px;border-radius:8px;font-weight:600;color:#0f172a;cursor:pointer}
-    .page-link.active{background:linear-gradient(90deg,#eef2ff,#fff);box-shadow:inset 0 -1px 0 rgba(0,0,0,0.03)}
-
+    html,body{height:100%;margin:0;background:linear-gradient(180deg,#eef2ff 0%, #f8fafc 100%)}
+    .app{
+      display:flex;
+      min-height:100vh;
+    }
+    /* Left Sidebar */
+    .sidebar{
+      width:var(--sidebar-width);
+      background:linear-gradient(180deg,#ffffff,#f8fafc);
+      border-right:1px solid rgba(15,23,42,0.06);
+      padding:20px 16px;
+      box-sizing:border-box;
+    }
+    .brand{
+      display:flex;align-items:center;gap:12px;padding-bottom:12px;margin-bottom:6px;border-bottom:1px solid rgba(15,23,42,0.04)
+    }
+    .brand svg{width:36px;height:36px}
+    .brand h1{font-size:16px;margin:0}
+    .nav-list{list-style:none;padding:12px 0;margin:0;}
+    .nav-item{padding:10px 12px;border-radius:8px;color:var(--muted);cursor:pointer;display:flex;align-items:center;gap:8px}
+    .nav-item:hover{background:rgba(11,99,255,0.06);color:var(--accent)}
+    .nav-item.active{background:rgba(11,99,255,0.10);color:var(--accent);font-weight:600}
+    .nav-item .num{width:34px;flex-shrink:0;color:var(--muted);font-weight:600}
+    /* Main area */
+    .main{
+      flex:1;display:flex;flex-direction:column;align-items:center;gap:18px;padding:22px;box-sizing:border-box;
+    }
+    /* Top bar */
+    .topbar{height:var(--topbar-height);width:100%;max-width:1280px;background:transparent;display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .topbar-inner{display:flex;align-items:center;gap:16px;background:#fff;padding:8px 14px;border-radius:10px;box-shadow:0 6px 22px rgba(2,6,23,0.06);width:100%;}
+    .top-left{display:flex;align-items:center;gap:12px}
+    .top-title{font-size:16px;font-weight:700}
+    .top-meta{color:var(--muted);font-size:13px}
     /* Device frame */
-    .device-wrap{background:transparent;display:flex;flex-direction:column;align-items:center}
-    .device{
-      width:var(--device-w);
-      height:var(--device-h);
-      background:#fff;
-      border-radius:28px;
-      box-shadow:0 20px 50px rgba(2,6,23,0.15);
-      overflow:hidden;
-      position:relative;
-      border:6px solid #0b1220;
+    .device-wrap{background:transparent;display:flex;align-items:center;justify-content:center;width:100%;overflow:auto}
+    .device-frame{
+      width:var(--device-w);height:var(--device-h);background:linear-gradient(180deg,#fff,#fbfdff);border-radius:18px;box-shadow:0 20px 50px rgba(2,6,23,0.12);overflow:hidden;position:relative;border:12px solid #222; /* frame */
+      transform-origin:top center;
     }
-    .device .viewport{width:100%;height:100%;display:flex;}
-
-    /* Left collapsed rail inside device (72px) */
-    .rail{width:var(--rail-width);background:#0b1220;color:#fff;display:flex;flex-direction:column;align-items:center;padding-top:16px;gap:8px}
-    .rail .btn{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;cursor:pointer}
-    .rail .btn svg{width:24px;height:24px;fill:currentColor}
-    .rail .btn.active{background:rgba(255,255,255,0.06)}
-    .rail .spacer{flex:1}
-
-    /* Main content area */
-    .screen{flex:1;padding:18px;display:flex;flex-direction:column}
-
-    /* Top bar component */
-    .topbar{height:56px;display:flex;align-items:center;gap:12px;padding:0 12px;border-bottom:1px solid #eef2f7}
-    .topbar .title{font-weight:700;font-size:16px}
-    .topbar .system{flex:1;text-align:center;font-weight:700;color:var(--muted)}
-    .topbar .actions{display:flex;align-items:center;gap:8px}
-    .role{background:#eef2ff;color:var(--accent);padding:6px 10px;border-radius:999px;font-weight:600}
-    .logout{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer}
-
-    /* Content area */
-    .content{padding:18px;overflow:auto}
-    .section{background:#fff;border-radius:12px;padding:12px;margin-bottom:12px;border:1px solid #eef2f7}
-    .section h4{margin:0 0 8px 0}
-
-    /* Status badges */
-    .badges{display:flex;flex-wrap:wrap;gap:8px}
-    .badge{padding:6px 10px;border-radius:999px;font-weight:700;font-size:13px}
-    .submitted{background:#fff7ed;color:#b45309;border:1px solid #fef3c7}
-    .validated{background:#ecfeff;color:#065f46;border:1px solid #cffafe}
-    .recommended{background:#eef2ff;color:#1e3a8a;border:1px solid #dbeafe}
-    .approved{background:#ecfdf5;color:#065f46;border:1px solid #bbf7d0}
-    .provisional{background:#f3f4f6;color:#374151;border:1px solid #e5e7eb}
-    .confirmed{background:#eef2ff;color:#0b5cff;border:1px solid #dbeafe}
-    .paydraft{background:#fff7f8;color:#9f1239;border:1px solid #ffe4e6}
-    .paylocked{background:#111827;color:#fff}
-    .sentfinance{background:#f0fdf4;color:#065f46;border:1px solid #bbf7d0}
-
-    /* Global components preview area */
-    .variant-tabs{display:flex;gap:8px;margin-bottom:12px}
-    .variant-tabs button{padding:8px 12px;border-radius:8px;border:1px solid #e6edf6;background:#fff;cursor:pointer}
-    .variant-tabs button.active{background:linear-gradient(90deg,#eef2ff,#fff);border-color:#c7ddff}
-
-    /* Responsive note - locked frame so we don't change */
-    .note{font-size:12px;color:var(--muted)}
-
-    /* small helpers */
+    /* content area inside device */
+    .device{
+      width:100%;height:100%;background:linear-gradient(180deg,#f8fafc 0%, #ffffff 100%);display:flex;gap:0;box-sizing:border-box;padding:0;
+    }
+    /* in-device left rail */
+    .rail{width:220px;background:#0f172a;color:#fff;padding:18px;box-sizing:border-box}
+    .rail .logo-row{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+    .rail .logo-row svg{width:36px;height:36px}
+    .rail .rail-list{list-style:none;padding:0;margin:0}
+    .rail .rail-item{padding:8px 10px;border-radius:8px;color:#cbd5e1;cursor:pointer;margin-bottom:6px}
+    .rail .rail-item:hover{background:rgba(255,255,255,0.06);color:#fff}
+    .rail .rail-item.active{background:rgba(255,255,255,0.12);font-weight:600;color:#fff}
+    /* device main content */
+    .device-main{flex:1;padding:18px 22px;overflow:auto}
+    .page{display:none}
+    .page.active{display:block}
+    .card{background:var(--card);padding:14px;border-radius:10px;box-shadow:0 2px 8px rgba(2,6,23,0.04);margin-bottom:12px}
+    .h1{font-size:20px;margin:0 0 8px 0}
+    .muted{color:var(--muted);font-size:13px}
+    .btn{padding:8px 12px;border-radius:8px;border:none;background:var(--accent);color:#fff;font-weight:600;cursor:pointer}
+    .btn.secondary{background:#fff;color:var(--accent);border:1px solid rgba(11,99,255,0.12)}
+    .btn.ghost{background:transparent;color:var(--muted);border:1px dashed rgba(15,23,42,0.06)}
     .row{display:flex;gap:12px;align-items:center}
-    code.k{background:#0b1220;color:#fff;padding:2px 6px;border-radius:6px;font-weight:700}
+    .col{flex:1}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:8px 10px;text-align:left;border-bottom:1px solid rgba(15,23,42,0.04);font-size:13px}
+    .status{display:inline-block;padding:6px 8px;border-radius:999px;font-weight:700;font-size:12px}
+    .status.success{background:rgba(22,163,74,0.12);color:var(--success)}
+    .status.warning{background:rgba(245,158,11,0.12);color:var(--warning)}
+    .status.danger{background:rgba(239,68,68,0.10);color:var(--danger)}
+    .status.info{background:rgba(14,165,233,0.10);color:var(--info)}
+    .avatar{width:36px;height:36px;border-radius:8px;background:linear-gradient(90deg,#e2e8f0,#c7ddff);display:inline-flex;align-items:center;justify-content:center;font-weight:700;color:#0f172a}
+    .form-row{display:flex;gap:10px;align-items:center}
+    .input,select,textarea{padding:8px;border-radius:8px;border:1px solid rgba(15,23,42,0.06);background:#fff;font-size:13px}
+    .muted-small{font-size:12px;color:var(--muted)}
+    /* small helpers */
+    .space{height:12px}
+    .kbd{background:#eef2ff;padding:4px 8px;border-radius:6px;color:var(--accent);font-weight:700}
+    /* responsive scaling to fit viewport comfortably */
+    @media (max-width:1500px){
+      .device-frame{transform:scale(0.78)}
+    }
+    @media (max-width:1200px){
+      .device-frame{transform:scale(0.6)}
+    }
+    @media (max-width:800px){
+      .sidebar{display:none}
+      .device-frame{transform:scale(0.5)}
+    }
   </style>
 </head>
 <body>
   <div class="app">
-    <aside class="app-nav">
-      <h3>BoSS Prototype — Pages</h3>
-      <div class="pages" role="navigation" aria-label="Pages">
-        <div class="page-link active" data-page="page-00">00 – Design System</div>
-        <div class="page-link" data-page="page-01">01 – Global Components</div>
-        <div class="page-link" data-page="page-02">02 – Screens (Executive)</div>
-        <div class="page-link" data-page="page-03">03 – Screens (HR)</div>
-        <div class="page-link" data-page="page-04">04 – Screens (Committee)</div>
-        <div class="page-link" data-page="page-05">05 – Screens (Finance)</div>
-        <div class="page-link" data-page="page-06">06 – Screens (Audit)</div>
-        <div class="page-link" data-page="page-07">07 – Prototype Flow (Wiring)</div>
-      </div>
-      <p class="note" style="margin-top:12px">Device frame: iPad Pro 12.9” — 1366 × 1024 — Landscape (locked)</p>
-    </aside>
-
-    <div class="device-wrap">
-      <div class="device" role="region" aria-label="iPad Pro 12.9 inch landscape frame">
-        <div class="viewport">
-          <!-- Left navigation rail (collapsed) -->
-          <nav class="rail" aria-label="Left Navigation Rail">
-            <div class="btn" title="Dashboard" data-key="dashboard"> 
-              <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zM13 21h8V11h-8v10zM13 3v6h8V3h-8z"/></svg>
-            </div>
-            <div class="btn" title="Recruitment" data-key="recruitment">
-              <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-6 8v-1c0-2.76 5.24-4 6-4s6 1.24 6 4v1H6z"/></svg>
-            </div>
-            <div class="btn" title="Employees" data-key="employees">
-              <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zM8 11c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.67 0-8 1.34-8 4v3h6v-3c0-.9.36-1.73.94-2.35C6.63 13.6 7.29 13 8 13zm8 0c-.29 0-.62.02-.97.05C14.97 13.44 14 14.7 14 16v3h6v-3c0-2.66-5.33-4-8-4z"/></svg>
-            </div>
-            <div class="btn" title="Establishment" data-key="establishment">
-              <svg viewBox="0 0 24 24"><path d="M12 2L1 7l11 5 9-4.09V17h2V7L12 2z"/></svg>
-            </div>
-            <div class="btn active" title="Payroll" data-key="payroll">
-              <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zM11 14.5v-7l6 3.5-6 3.5z"/></svg>
-            </div>
-            <div class="btn" title="Finance Handoff" data-key="finance">
-              <svg viewBox="0 0 24 24"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/></svg>
-            </div>
-            <div class="btn" title="Audit" data-key="audit">
-              <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l4.99 5 1.49-1.49-5-4.99z"/></svg>
-            </div>
-            <div class="btn" title="Reports" data-key="reports">
-              <svg viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zm0-10v2h14V7H7z"/></svg>
-            </div>
-            <div class="spacer"></div>
-          </nav>
-
-          <main class="screen">
-            <div class="topbar">
-              <div class="title" id="screen-title">00 – Design System</div>
-              <div class="system">BoSS HR & Payroll System</div>
-              <div class="actions">
-                <div class="role" id="role-label">Executive</div>
-                <div class="logout" title="Logout">
-                  <svg viewBox="0 0 24 24" width="18" height="18"><path d="M16 13v-2H7V8l-5 4 5 4v-3zM20 3h-8v2h8v14h-8v2h8c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg>
-                </div>
-              </div>
-            </div>
-
-            <div class="content">
-              <!-- Pages (sections) -->
-
-              <section class="section" id="page-00">
-                <h4>00 – Design System</h4>
-                <p>Color tokens, typography, spacing scale and device frame locked to iPad Pro 12.9” (1366×1024). Use this area to show the design tokens and usage guidance.</p>
-                <div style="display:flex;gap:12px;margin-top:12px;flex-wrap:wrap">
-                  <div style="width:120px;background:#fff;padding:12px;border-radius:8px;border:1px solid #eef2f7">
-                    <strong>Primary</strong>
-                    <div style="height:40px;background:var(--accent);border-radius:6px;margin-top:8px"></div>
-                    <small class="note">#0b5cff</small>
-                  </div>
-                  <div style="width:160px;background:#fff;padding:12px;border-radius:8px;border:1px solid #eef2f7">
-                    <strong>Typography</strong>
-                    <div style="margin-top:8px"><div style="font-size:20px;font-weight:700">Heading 1</div><div style="font-size:16px">Body / UI text</div></div>
-                  </div>
-                </div>
-              </section>
-
-              <section class="section" id="page-01" style="display:none">
-                <h4>01 – Global Components</h4>
-                <p>All global components are defined here once and reused across screens: Left Navigation Rail (72px collapsed, icons only), Top Bar, and Status Badges (variants).</p>
-
-                <div class="section">
-                  <h4>Left Navigation Rail (collapsed — 72px)</h4>
-                  <p class="note">Icons only, width: <code class="k">72px</code>. Below we show three variants (Executive / HR / Audit). The in-device rail is already 72px and collapsed.</p>
-                  <div class="variant-tabs" role="tablist">
-                    <button class="active" data-variant="exec">Executive</button>
-                    <button data-variant="hr">HR</button>
-                    <button data-variant="audit">Audit</button>
-                  </div>
-                  <div id="rail-preview" style="border-radius:8px;overflow:hidden;border:1px solid #eef2f7;display:inline-block">
-                    <!-- a live small preview replicating the rail -->
-                    <div style="width:72px;background:#0b1220;color:#fff;padding-top:12px;display:flex;flex-direction:column;gap:8px;align-items:center">
-                      <div style="width:48px;height:48px;border-radius:12px;background:rgba(255,255,255,0.03);display:flex;align-items:center;justify-content:center">D</div>
-                      <div style="width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center">R</div>
-                      <div style="width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center">E</div>
-                      <div style="height:12px"></div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="section">
-                  <h4>Top Bar Component</h4>
-                  <p class="note">Structure — screen title (left), System name: <strong>BoSS HR & Payroll System</strong> (center), Role label (right) and Logout icon.</p>
-                  <div style="border:1px solid #eef2f7;border-radius:8px;padding:12px;background:#fff;max-width:800px">
-                    <div style="display:flex;align-items:center;gap:8px">
-                      <div style="font-weight:700">Screen title</div>
-                      <div style="flex:1;text-align:center;color:var(--muted);font-weight:700">BoSS HR & Payroll System</div>
-                      <div style="display:flex;align-items:center;gap:8px"><div style="background:#eef2ff;color:var(--accent);padding:6px 10px;border-radius:999px">Executive</div><div style="width:36px;height:36px;border-radius:8px;background:#f8fafc;display:flex;align-items:center;justify-content:center">⎋</div></div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="section">
-                  <h4>Status Badge Component</h4>
-                  <p class="note">Variants used on lists, rows and payroll status indicators.</p>
-                  <div class="badges" style="margin-top:8px">
-                    <div class="badge submitted">Submitted</div>
-                    <div class="badge validated">Validated by HR</div>
-                    <div class="badge recommended">Recommended by Committee</div>
-                    <div class="badge approved">Approved for Appointment</div>
-                    <div class="badge provisional">Provisional Employee</div>
-                    <div class="badge confirmed">Confirmed Employee</div>
-                    <div class="badge paydraft">Payroll Draft</div>
-                    <div class="badge paylocked">Payroll Locked</div>
-                    <div class="badge sentfinance">Sent to Finance</div>
-                  </div>
-                </div>
-              </section>
-
-              <section class="section" id="page-02" style="display:none">
-                <h4>02 – Screens (Executive)</h4>
-                <p>Executive-specific screens go here — dashboard summaries, approval workflows, committee recommendations and quick actions.</p>
-              </section>
-
-              <section class="section" id="page-03" style="display:none">
-                <h4>03 – Screens (HR)</h4>
-                <p>HR screens: candidate tracking, validation controls, personnel records and appointments.</p>
-              </section>
-
-              <section class="section" id="page-04" style="display:none">
-                <h4>04 – Screens (Committee)</h4>
-                <p>Committee review pages: recommendations, notes, voting and scheduling.</p>
-              </section>
-
-              <section class="section" id="page-05" style="display:none">
-                <h4>05 – Screens (Finance)</h4>
-                <p>Finance handoff, payroll exports, reconciliation and payment status.</p>
-              </section>
-
-              <section class="section" id="page-06" style="display:none">
-                <h4>06 – Screens (Audit)</h4>
-                <p>Audit trails, activity logs, tamper evidence and approvals history.</p>
-              </section>
-
-              <section class="section" id="page-07" style="display:none">
-                <h4>07 – Prototype Flow (Wiring)</h4>
-                <p>Flow wiring for the prototype: which screen triggers what action. Use this page to wire interactive hotspots for demos.</p>
-              </section>
-
-            </div>
-
-          </main>
+    <aside class="sidebar" aria-label="Main navigation">
+      <div class="brand">
+        <!-- Embedded inline SVG logo -->
+        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+          <rect width="48" height="48" rx="10" fill="#0b63ff" />
+          <path d="M14 30V18L24 14l10 4v12" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        <div>
+          <h1>BoSS Prototype</h1>
+          <div class="muted-small">HR • Finance • Audit</div>
         </div>
       </div>
-      <p style="margin-top:12px;color:var(--muted);font-size:13px">Prototype: <strong>BoSS HR & Payroll System – Executive Demo</strong> — Device frame locked to iPad Pro 12.9” (1366×1024) — Landscape only.</p>
-    </div>
+      <ul class="nav-list" id="leftNav">
+        <!-- exact 12-page list in requested order -->
+        <li class="nav-item" data-page="00"> <span class="num">00</span> – Login</li>
+        <li class="nav-item" data-page="01"> <span class="num">01</span> – Design System</li>
+        <li class="nav-item" data-page="02"> <span class="num">02</span> – Global Components</li>
+        <li class="nav-item" data-page="03"> <span class="num">03</span> – Screens (Executive)</li>
+        <li class="nav-item" data-page="04"> <span class="num">04</span> – Screens (HR)</li>
+        <li class="nav-item" data-page="05"> <span class="num">05</span> – Screens (Committee)</li>
+        <li class="nav-item" data-page="06"> <span class="num">06</span> – Screens (Finance)</li>
+        <li class="nav-item" data-page="07"> <span class="num">07</span> – Screens (Audit)</li>
+        <li class="nav-item" data-page="08"> <span class="num">08</span> – Screens (Payroll)</li>
+        <li class="nav-item" data-page="09"> <span class="num">09</span> – Reports & Exports</li>
+        <li class="nav-item" data-page="10"> <span class="num">10</span> – Admin / Settings</li>
+        <li class="nav-item" data-page="11"> <span class="num">11</span> – Prototype Flow (Wiring)</li>
+      </ul>
+      <div style="margin-top:auto;padding-top:12px;border-top:1px solid rgba(15,23,42,0.04)">
+        <div class="muted-small">User: <strong id="userRole">Guest</strong></div>
+        <div class="muted-small">Timezone: UTC</div>
+      </div>
+    </aside>
 
+    <main class="main">
+      <div class="topbar">
+        <div class="topbar-inner">
+          <div class="top-left">
+            <!-- Embedded logo in top bar -->
+            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:36px;height:36px;border-radius:6px;background:#eef2ff;padding:6px;" aria-hidden>
+              <rect width="48" height="48" rx="10" fill="#0b63ff" />
+              <path d="M14 30V18L24 14l10 4v12" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            <div>
+              <div class="top-title" id="screenTitle">00 – Login</div>
+              <div class="top-meta" id="screenSubtitle">BoSS Prototype — iPad Pro 12.9" (1366×1024)</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px">
+            <div class="muted-small">Role: <strong id="topRole">Guest</strong></div>
+            <button class="btn secondary" id="logoutBtn" style="display:none">Logout</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="device-wrap">
+        <div class="device-frame" role="application" aria-label="iPad Pro 12.9 device frame">
+          <div class="device">
+            <aside class="rail">
+              <div class="logo-row">
+                <!-- Logo visible in-device -->
+                <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+                  <rect width="48" height="48" rx="10" fill="#fff" />
+                  <path d="M14 30V18L24 14l10 4v12" stroke="#0b63ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                <div style="color:#fff;font-weight:700">BoSS</div>
+              </div>
+              <ul class="rail-list" id="railNav">
+                <li class="rail-item" data-page="00">00 – Login</li>
+                <li class="rail-item" data-page="01">01 – Design System</li>
+                <li class="rail-item" data-page="02">02 – Global Components</li>
+                <li class="rail-item" data-page="03">03 – Screens (Executive)</li>
+                <li class="rail-item" data-page="04">04 – Screens (HR)</li>
+                <li class="rail-item" data-page="05">05 – Screens (Committee)</li>
+                <li class="rail-item" data-page="06">06 – Screens (Finance)</li>
+                <li class="rail-item" data-page="07">07 – Screens (Audit)</li>
+                <li class="rail-item" data-page="08">08 – Screens (Payroll)</li>
+                <li class="rail-item" data-page="09">09 – Reports & Exports</li>
+                <li class="rail-item" data-page="10">10 – Admin / Settings</li>
+                <li class="rail-item" data-page="11">11 – Prototype Flow (Wiring)</li>
+              </ul>
+            </aside>
+
+            <section class="device-main" id="deviceMain">
+              <!-- Pages -->
+              <!-- Page 00: Login (default) -->
+              <div id="page-00" class="page active">
+                <div style="display:flex;gap:18px;align-items:center">
+                  <div style="flex:1">
+                    <div class="card">
+                      <h2 class="h1">Welcome to BoSS</h2>
+                      <p class="muted">A single-file interactive prototype for HR, Finance and Audit flows. Default device: iPad Pro 12.9" (1366×1024).</p>
+                      <div class="space"></div>
+                      <div style="display:flex;gap:12px;align-items:center">
+                        <div style="flex:1;max-width:420px">
+                          <label class="muted-small">Email</label>
+                          <input class="input" id="loginEmail" placeholder="demo@example.com" />
+                        </div>
+                        <div style="flex:1;max-width:260px">
+                          <label class="muted-small">Role</label>
+                          <select id="loginRole" class="input">
+                            <option>Guest</option>
+                            <option>Executive</option>
+                            <option>HR</option>
+                            <option>Committee</option>
+                            <option>Finance</option>
+                            <option>Audit</option>
+                            <option>Payroll</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="space"></div>
+                      <div style="display:flex;gap:10px">
+                        <button class="btn" id="loginBtn">Login (Use entered role)</button>
+                        <!-- Demo Login option B: navigates to page 03 and sets role to Executive -->
+                        <button class="btn secondary" id="demoLoginBtn">Demo Login (Option B)</button>
+                        <button class="btn ghost" id="forgotBtn">Forgot?</button>
+                      </div>
+                    </div>
+                    <div style="margin-top:10px" class="muted-small">Demo Login (Option B) will sign you in as <span class="kbd">Executive</span> and open <strong>03 – Screens (Executive)</strong>.</div>
+                  </div>
+                  <div style="width:380px">
+                    <div class="card">
+                      <div style="display:flex;align-items:center;gap:12px">
+                        <div style="flex:1">
+                          <div class="muted-small">BoSS Logo</div>
+                          <!-- Logo large on login screen -->
+                          <div style="display:flex;align-items:center;gap:12px;margin-top:8px">
+                            <svg viewBox="0 0 96 96" width="96" height="96" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+                              <rect width="96" height="96" rx="18" fill="#0b63ff" />
+                              <path d="M28 60V36L48 28l20 8v24" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                            <div>
+                              <div style="font-weight:800">BoSS — Business Services Suite</div>
+                              <div class="muted-small">Secure demos only. No real data.</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="space"></div>
+                    <div class="card">
+                      <div class="muted-small">Quick stats</div>
+                      <div style="display:flex;gap:8px;margin-top:8px">
+                        <div style="flex:1;text-align:center">
+                          <div style="font-weight:800;font-size:20px">6</div>
+                          <div class="muted-small">Pending Approvals</div>
+                        </div>
+                        <div style="flex:1;text-align:center">
+                          <div style="font-weight:800;font-size:20px">12</div>
+                          <div class="muted-small">New Candidates</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Page 01: Design System -->
+              <div id="page-01" class="page">
+                <div class="card">
+                  <h2 class="h1">Design System</h2>
+                  <p class="muted">Tokens, components and examples used across the prototype.</p>
+                  <div class="space"></div>
+                  <div style="display:flex;gap:12px;flex-wrap:wrap">
+                    <div class="card" style="min-width:260px">
+                      <div class="muted-small">Colors</div>
+                      <div style="display:flex;gap:8px;margin-top:8px">
+                        <div style="width:64px;height:48px;background:#0b63ff;border-radius:6px"></div>
+                        <div style="width:64px;height:48px;background:#0ea5e9;border-radius:6px"></div>
+                        <div style="width:64px;height:48px;background:#16a34a;border-radius:6px"></div>
+                        <div style="width:64px;height:48px;background:#f59e0b;border-radius:6px"></div>
+                      </div>
+                    </div>
+                    <div class="card" style="min-width:260px">
+                      <div class="muted-small">Buttons</div>
+                      <div style="display:flex;gap:8px;margin-top:8px">
+                        <button class="btn">Primary</button>
+                        <button class="btn secondary">Secondary</button>
+                        <button class="btn ghost">Ghost</button>
+                      </div>
+                    </div>
+                    <div class="card" style="min-width:260px">
+                      <div class="muted-small">Status Badges</div>
+                      <div style="display:flex;gap:8px;margin-top:8px">
+                        <span class="status success">Active</span>
+                        <span class="status info">In Review</span>
+                        <span class="status warning">Pending</span>
+                        <span class="status danger">Rejected</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Page 02: Global Components -->
+              <div id="page-02" class="page">
+                <div class="card">
+                  <h2 class="h1">Global Components</h2>
+                  <p class="muted">Re-usable components: cards, tables, badges, avatars, forms.</p>
+                </div>
+                <div class="card">
+                  <h3 class="muted-small">Example Table</h3>
+                  <table>
+                    <thead>
+                      <tr><th>Item</th><th>Owner</th><th>Status</th><th>Updated</th></tr>
+                    </thead>
+                    <tbody>
+                      <tr><td>Onboarding Form</td><td>A. Smith</td><td><span class="status success">Live</span></td><td>02/11/2025</td></tr>
+                      <tr><td>Payroll Widget</td><td>M. Patel</td><td><span class="status info">In Review</span></td><td>28/10/2025</td></tr>
+                      <tr><td>Reports Export</td><td>K. Li</td><td><span class="status warning">Pending</span></td><td>14/10/2025</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- Page 03: Screens (Executive) -->
+              <div id="page-03" class="page">
+                <div class="card">
+                  <div style="display:flex;justify-content:space-between;align-items:center">
+                    <div>
+                      <div class="muted-small">Executive Dashboard</div>
+                      <div style="font-weight:800;font-size:20px">Overview & Approvals</div>
+                    </div>
+                    <div style="display:flex;gap:8px;align-items:center">
+                      <div class="muted-small">Last login: <strong>01/01/2026</strong></div>
+                      <button class="btn" id="execRefresh">Refresh</button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="card">
+                  <h3 class="muted-small">Pending Approvals</h3>
+                  <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:10px">
+                    <div class="card">
+                      <div style="display:flex;justify-content:space-between;align-items:center">
+                        <div>
+                          <div style="font-weight:800">Salary Increase — J. Doe</div>
+                          <div class="muted-small">Requested: 12/12/2025</div>
+                        </div>
+                        <div style="text-align:right">
+                          <div class="status warning">Awaiting</div>
+                          <div class="space"></div>
+                          <button class="btn secondary">Review</button>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="card">
+                      <div style="display:flex;justify-content:space-between;align-items:center">
+                        <div>
+                          <div style="font-weight:800">Role Change — M. Gomez</div>
+                          <div class="muted-small">Requested: 22/12/2025</div>
+                        </div>
+                        <div style="text-align:right">
+                          <div class="status info">In Review</div>
+                          <div class="space"></div>
+                          <button class="btn secondary">Open</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="card">
+                  <h3 class="muted-small">Executive Actions</h3>
+                  <div style="display:flex;gap:12px;align-items:center">
+                    <button class="btn">Approve Selected</button>
+                    <button class="btn secondary">Request More Info</button>
+                    <select class="input" id="execSelect">
+                      <option>Notify HR</option>
+                      <option>Escalate to Board</option>
+                    </select>
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- Page 04: Screens (HR) -->
+              <div id="page-04" class="page">
+                <div class="card">
+                  <h2 class="h1">HR — Candidates</h2>
+                  <p class="muted">Manage candidates, interviews and offers.</p>
+                </div>
+                <div class="card">
+                  <h3 class="muted-small">Candidate List</h3>
+                  <table id="candidatesTable">
+                    <thead><tr><th>Name</th><th>Role</th><th>Applied</th><th>Status</th><th>Actions</th></tr></thead>
+                    <tbody></tbody>
+                  </table>
+                </div>
+                <div class="card">
+                  <h3 class="muted-small">New Candidate</h3>
+                  <div class="form-row">
+                    <input class="input" placeholder="Full name" id="candName" />
+                    <input class="input" placeholder="Position" id="candRole" />
+                    <button class="btn" id="addCandBtn">Add</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Page 05: Screens (Committee) -->
+              <div id="page-05" class="page">
+                <div class="card">
+                  <h2 class="h1">Committee Queue</h2>
+                  <p class="muted">Committee reviews for board-level approvals.</p>
+                </div>
+                <div class="card">
+                  <h3 class="muted-small">Agenda</h3>
+                  <table>
+                    <thead><tr><th>Item</th><th>Owner</th><th>Due</th><th>Status</th></tr></thead>
+                    <tbody>
+                      <tr><td>Budget Review</td><td>Finance</td><td>15/01/2026</td><td><span class="status info">Scheduled</span></td></tr>
+                      <tr><td>Policy Update</td><td>HR</td><td>20/01/2026</td><td><span class="status.warning">Pending</span></td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- Page 06: Screens (Finance) -->
+              <div id="page-06" class="page">
+                <div class="card">
+                  <h2 class="h1">Finance — Handoffs</h2>
+                  <p class="muted">Financial approvals and handoff forms.</p>
+                </div>
+                <div class="card">
+                  <h3 class="muted-small">Finance Handoff Form</h3>
+                  <div style="display:flex;gap:8px;align-items:center">
+                    <input class="input" placeholder="Reference" id="financeRef" />
+                    <input class="input" placeholder="Amount (USD)" id="financeAmount" />
+                    <select class="input" id="financeAccount"><option>Operations</option><option>Payroll</option><option>Benefits</option></select>
+                    <button class="btn" id="financeSubmit">Send to Finance</button>
+                  </div>
+                </div>
+                <div class="card">
+                  <h3 class="muted-small">Recent Handoffs</h3>
+                  <table id="handoffsTable">
+                    <thead><tr><th>Ref</th><th>Amount</th><th>Account</th><th>Date</th><th>Status</th></tr></thead>
+                    <tbody></tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- Page 07: Screens (Audit) -->
+              <div id="page-07" class="page">
+                <div class="card">
+                  <h2 class="h1">Audit Log</h2>
+                  <p class="muted">Activity logs, immutable entries and notes for audits.</p>
+                </div>
+                <div class="card">
+                  <table id="auditTable">
+                    <thead><tr><th>Date</th><th>User</th><th>Action</th><th>Details</th></tr></thead>
+                    <tbody></tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- Page 08: Screens (Payroll) -->
+              <div id="page-08" class="page">
+                <div class="card">
+                  <h2 class="h1">Payroll</h2>
+                  <p class="muted">Payroll runs and employee payment data (USD).</p>
+                </div>
+                <div class="card">
+                  <h3 class="muted-small">Payroll Table</h3>
+                  <table id="payrollTable">
+                    <thead><tr><th>Employee</th><th>Period</th><th>Gross (USD)</th><th>Tax (USD)</th><th>Net (USD)</th><th>Status</th></tr></thead>
+                    <tbody></tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- Page 09: Reports & Exports -->
+              <div id="page-09" class="page">
+                <div class="card">
+                  <h2 class="h1">Reports & Exports</h2>
+                  <p class="muted">Generate exports and download reports.</p>
+                </div>
+                <div class="card">
+                  <h3 class="muted-small">Available Reports</h3>
+                  <ul id="reportsList">
+                  </ul>
+                </div>
+              </div>
+
+              <!-- Page 10: Admin / Settings -->
+              <div id="page-10" class="page">
+                <div class="card">
+                  <h2 class="h1">Admin / Settings</h2>
+                  <p class="muted">Change system settings and manage users.</p>
+                </div>
+                <div class="card">
+                  <label class="muted-small">Company Name</label>
+                  <input class="input" id="companyName" value="Acme Corp" />
+                  <div class="space"></div>
+                  <label class="muted-small">Default Currency</label>
+                  <select class="input" id="defaultCurrency"><option>USD</option><option>EUR</option></select>
+                  <div class="space"></div>
+                  <button class="btn" id="saveSettings">Save Settings</button>
+                </div>
+              </div>
+
+              <!-- Page 11: Prototype Flow (Wiring) -->
+              <div id="page-11" class="page">
+                <div class="card">
+                  <h2 class="h1">Prototype Flow (Wiring)</h2>
+                  <p class="muted">High-level wiring between screens for demo flows.</p>
+                </div>
+                <div class="card">
+                  <ol>
+                    <li>Login (00) → Executive (03) via Demo Login (Option B)</li>
+                    <li>HR (04) manages candidates → Committee (05) review</li>
+                    <li>Finance (06) receives handoffs from HR/Exec</li>
+                    <li>Payroll (08) runs monthly exports to Reports (09)</li>
+                    <li>Audit (07) records all handoffs and approvals</li>
+                    <li>Admin (10) adjusts settings, global components (02) and design tokens (01)</li>
+                  </ol>
+                </div>
+              </div>
+
+            </section>
+          </div>
+        </div>
+      </div>
+
+    </main>
   </div>
 
   <script>
-    // Page switching
-    document.querySelectorAll('.page-link').forEach(el=>el.addEventListener('click',ev=>{
-      document.querySelectorAll('.page-link').forEach(x=>x.classList.remove('active'));
-      ev.currentTarget.classList.add('active');
-      const page = ev.currentTarget.dataset.page;
-      document.querySelectorAll('.section[id^="page-"]').forEach(s=>s.style.display = s.id === page ? 'block' : 'none');
-      document.getElementById('screen-title').textContent = ev.currentTarget.textContent;
-    }));
+    // Prototype data and navigation handling
+    const pages = {
+      '00': {id:'page-00', title:'00 – Login'},
+      '01': {id:'page-01', title:'01 – Design System'},
+      '02': {id:'page-02', title:'02 – Global Components'},
+      '03': {id:'page-03', title:'03 – Screens (Executive)'},
+      '04': {id:'page-04', title:'04 – Screens (HR)'},
+      '05': {id:'page-05', title:'05 – Screens (Committee)'},
+      '06': {id:'page-06', title:'06 – Screens (Finance)'},
+      '07': {id:'page-07', title:'07 – Screens (Audit)'},
+      '08': {id:'page-08', title:'08 – Screens (Payroll)'},
+      '09': {id:'page-09', title:'09 – Reports & Exports'},
+      '10': {id:'page-10', title:'10 – Admin / Settings'},
+      '11': {id:'page-11', title:'11 – Prototype Flow (Wiring)'}
+    };
 
-    // Variant tabs for rail
-    document.querySelectorAll('.variant-tabs button').forEach(btn=>btn.addEventListener('click',ev=>{
-      document.querySelectorAll('.variant-tabs button').forEach(b=>b.classList.remove('active'));
-      ev.currentTarget.classList.add('active');
-      const v = ev.currentTarget.dataset.variant;
-      const preview = document.getElementById('rail-preview');
-      // swap simple content to show label differences (icons-only rail stays same width)
-      if(v==='exec') preview.innerHTML = '<div style="width:72px;background:#0b1220;color:#fff;padding-top:12px;display:flex;flex-direction:column;gap:8px;align-items:center'>\n  <div style="width:48px;height:48px;border-radius:12px;background:rgba(255,255,255,0.03);display:flex;align-items:center;justify-content:center">D</div>\n  <div style="width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center">R</div>\n  <div style="width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center">E</div>\n</div>';
-      if(v==='hr') preview.innerHTML = '<div style="width:72px;background:#04263a;color:#fff;padding-top:12px;display:flex;flex-direction:column;gap:8px;align-items:center'>\n  <div style="width:48px;height:48px;border-radius:12px;background:rgba(255,255,255,0.03);display:flex;align-items:center;justify-content:center">C</div>\n  <div style="width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center">E</div>\n  <div style="width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center">P</div>\n</div>';
-      if(v==='audit') preview.innerHTML = '<div style="width:72px;background:#2a0b12;color:#fff;padding-top:12px;display:flex;flex-direction:column;gap:8px;align-items:center'>\n  <div style="width:48px;height:48px;border-radius:12px;background:rgba(255,255,255,0.03);display:flex;align-items:center;justify-content:center">A</div>\n  <div style="width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center">S</div>\n  <div style="width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center">R</div>\n</div>';
-    }));
+    let state = {role:'Guest', current:'00'};
 
-    // Simple rail button click to simulate navigation
-    document.querySelectorAll('.rail .btn').forEach(b=>b.addEventListener('click',ev=>{
-      const key = ev.currentTarget.dataset.key;
-      alert('Rail item clicked: '+key+' (prototype)')
-    }));
+    function setActivePage(code, opts={push:true}){
+      if(!pages[code]) return;
+      // hide all
+      document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+      document.getElementById(pages[code].id).classList.add('active');
+      // update top title
+      document.getElementById('screenTitle').textContent = pages[code].title;
+      // update sidebar active
+      document.querySelectorAll('#leftNav .nav-item').forEach(el=>el.classList.toggle('active', el.dataset.page===code));
+      document.querySelectorAll('#railNav .rail-item').forEach(el=>el.classList.toggle('active', el.dataset.page===code));
+      // remember
+      state.current = code;
+      // update role display
+      document.getElementById('topRole').textContent = state.role;
+      document.getElementById('userRole').textContent = state.role;
+      // show logout button when logged in
+      document.getElementById('logoutBtn').style.display = state.role==='Guest' ? 'none':'inline-block';
+    }
 
-    // Keep frame locked: disable resizing behavior (note for demo)
+    // attach click handlers to left sidebar
+    document.querySelectorAll('#leftNav .nav-item').forEach(el=>{
+      el.addEventListener('click',()=> setActivePage(el.dataset.page));
+    });
+    // attach click handlers to in-device rail
+    document.querySelectorAll('#railNav .rail-item').forEach(el=>{
+      el.addEventListener('click',()=> setActivePage(el.dataset.page));
+    });
+
+    // Login handlers
+    document.getElementById('loginBtn').addEventListener('click',()=>{
+      const role = document.getElementById('loginRole').value || 'Guest';
+      state.role = role;
+      setActivePage('03'); // reasonable default after login
+    });
+    document.getElementById('demoLoginBtn').addEventListener('click',()=>{
+      state.role = 'Executive';
+      setActivePage('03');
+    });
+    document.getElementById('logoutBtn').addEventListener('click',()=>{
+      state.role = 'Guest';
+      setActivePage('00');
+    });
+
+    // Demo buttons
+    document.getElementById('execRefresh').addEventListener('click',()=> alert('Refreshed executive data (demo)'));
+
+    // Data for candidates
+    const candidates = [
+      {id:1,name:'Alice Johnson', role:'Product Designer', applied:'12/12/2025', status:'Interview'},
+      {id:2,name:'Brian Ochoa', role:'Backend Engineer', applied:'05/12/2025', status:'Offer'},
+      {id:3,name:'Chen Li', role:'HR Manager', applied:'21/12/2025', status:'Screening'}
+    ];
+
+    function renderCandidates(){
+      const tbody = document.querySelector('#candidatesTable tbody');
+      tbody.innerHTML='';
+      candidates.forEach(c=>{
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td><div style="display:flex;gap:8px;align-items:center"><div class="avatar">${c.name.split(' ').map(x=>x[0]).slice(0,2).join('')}</div><div><div style="font-weight:700">${c.name}</div><div class="muted-small">${c.role}</div></div></div></td><td>${c.role}</td><td>${c.applied}</td><td><span class="status info">${c.status}</span></td><td><button class="btn secondary" onclick="onViewCandidate(${c.id})">View</button> <button class="btn ghost" onclick="onRejectCandidate(${c.id})">Reject</button></td>`;
+        tbody.appendChild(tr);
+      });
+    }
+    function onViewCandidate(id){
+      const c = candidates.find(x=>x.id===id);
+      alert(`Viewing candidate: ${c.name} (role: ${c.role})`);
+    }
+    function onRejectCandidate(id){
+      const idx = candidates.findIndex(x=>x.id===id);
+      if(idx>-1){ candidates[idx].status='Rejected'; renderCandidates(); }
+    }
+    document.getElementById('addCandBtn').addEventListener('click',()=>{
+      const name = document.getElementById('candName').value.trim();
+      const role = document.getElementById('candRole').value.trim();
+      if(!name||!role){ alert('Please provide name and role'); return; }
+      const id = candidates.length?Math.max(...candidates.map(c=>c.id))+1:1;
+      candidates.push({id,name,role,applied:formatDate(new Date()),status:'Screening'});
+      document.getElementById('candName').value='';document.getElementById('candRole').value='';
+      renderCandidates();
+    });
+
+    // Finance handoffs
+    const handoffs = [
+      {ref:'F-1001',amount:1250.00,account:'Payroll',date:'02/12/2025',status:'Processed'},
+      {ref:'F-1002',amount:3200.50,account:'Operations',date:'18/12/2025',status:'Pending'}
+    ];
+    function renderHandoffs(){
+      const tb = document.querySelector('#handoffsTable tbody');tb.innerHTML='';
+      handoffs.forEach(h=>{
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${h.ref}</td><td>${formatUSD(h.amount)}</td><td>${h.account}</td><td>${h.date}</td><td><span class="status ${h.status==='Processed'?'success':'warning'}">${h.status}</span></td>`;
+        tb.appendChild(tr);
+      });
+    }
+    document.getElementById('financeSubmit').addEventListener('click',()=>{
+      const ref = document.getElementById('financeRef').value.trim()||`F-${Math.floor(Math.random()*9000)+1000}`;
+      const amount = parseFloat(document.getElementById('financeAmount').value)||0;
+      const account = document.getElementById('financeAccount').value;
+      if(amount<=0){ alert('Please enter a valid amount in USD'); return; }
+      handoffs.unshift({ref,amount,account,date:formatDate(new Date()),status:'Pending'});
+      document.getElementById('financeRef').value='';document.getElementById('financeAmount').value='';
+      renderHandoffs();
+    });
+
+    // Audit log
+    const audit = [
+      {date:'01/01/2026',user:'Admin',action:'System seeded',details:'Initial demo data'},
+      {date:'22/12/2025',user:'HR',action:'Candidate added',details:'Alice Johnson added to system'}
+    ];
+    function renderAudit(){
+      const tb = document.querySelector('#auditTable tbody');tb.innerHTML='';
+      audit.forEach(a=>{
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${a.date}</td><td>${a.user}</td><td>${a.action}</td><td>${a.details}</td>`;
+        tb.appendChild(tr);
+      });
+    }
+
+    // Payroll
+    const payroll = [
+      {emp:'John Employee',period:'Dec 2025',gross:5000.00,tax:1000.00,net:4000.00,status:'Paid'},
+      {emp:'Sara Worker',period:'Dec 2025',gross:4200.00,tax:840.00,net:3360.00,status:'Processing'}
+    ];
+    function renderPayroll(){
+      const tb = document.querySelector('#payrollTable tbody');tb.innerHTML='';
+      payroll.forEach(p=>{
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${p.emp}</td><td>${p.period}</td><td>${formatUSD(p.gross)}</td><td>${formatUSD(p.tax)}</td><td>${formatUSD(p.net)}</td><td><span class="status ${p.status==='Paid'?'success':'info'}">${p.status}</span></td>`;
+        tb.appendChild(tr);
+      });
+    }
+
+    // Reports
+    const reports = [
+      {id:'R-01',title:'Monthly Payroll',desc:'Includes gross/net for period',type:'CSV'},
+      {id:'R-02',title:'Candidates Report',desc:'List of active candidates',type:'PDF'},
+      {id:'R-03',title:'Audit Export',desc:'Full audit trail for period',type:'CSV'}
+    ];
+    function renderReports(){
+      const ul = document.getElementById('reportsList');ul.innerHTML='';
+      reports.forEach(r=>{
+        const li = document.createElement('li');
+        li.className='card';
+        li.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-weight:700">${r.title}</div><div class="muted-small">${r.desc}</div></div><div style="display:flex;gap:8px"><button class="btn" onclick="downloadReport('${r.id}')">Download ${r.type}</button><button class="btn secondary" onclick="previewReport('${r.id}')">Preview</button></div></div>`;
+        ul.appendChild(li);
+      });
+    }
+    function downloadReport(id){ alert('Downloading '+id+' (demo)'); }
+    function previewReport(id){ alert('Preview '+id+' (demo)'); }
+
+    // Admin settings
+    document.getElementById('saveSettings').addEventListener('click',()=>{
+      alert('Settings saved (demo): ' + document.getElementById('companyName').value + ' / ' + document.getElementById('defaultCurrency').value);
+    });
+
+    // helpers
+    function formatUSD(val){ return '$' + Number(val).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+    function formatDate(d){
+      const dt = new Date(d);
+      const dd = String(dt.getDate()).padStart(2,'0');
+      const mm = String(dt.getMonth()+1).padStart(2,'0');
+      const yyyy = dt.getFullYear();
+      return `${dd}/${mm}/${yyyy}`;
+    }
+
+    // initial render
+    renderCandidates();renderHandoffs();renderAudit();renderPayroll();renderReports();
+    setActivePage('00');
+
+    // Expose some functions for inline onclick handlers
+    window.onViewCandidate = onViewCandidate;
+    window.onRejectCandidate = onRejectCandidate;
+    window.downloadReport = downloadReport;
+    window.previewReport = previewReport;
   </script>
 </body>
 </html>
